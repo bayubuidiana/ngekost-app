@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('bonuses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('boarding_house_id')->constrained();
+            $table->foreignId('boarding_house_id')->constrained()->cascadeOnDalate();
             $table->string('image');
             $table->string('name');
             $table->string('description');
