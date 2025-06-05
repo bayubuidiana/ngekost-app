@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('thumbnail');
             $table->foreignId('city_id')->constrained()->cascadeOnDalate();
             $table->foreignId('category_id')->constrained()->cascadeOnDalate();
-            $table->text('descripton');
+            $table->text('description');
             $table->integer('price');
             $table->text('address');
             $table->timestamps();
