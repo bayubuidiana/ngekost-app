@@ -4,17 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BoardingHouse extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
-    protected $fillable =[
+    protected $fillable = [
         'name',
         'slug',
         'thumbnail',
         'city_id',
-        'catagory_id',
+        'category_id',
         'description',
         'price',
         'address',
@@ -32,21 +33,21 @@ class BoardingHouse extends Model
 
     public function rooms()
     {
-        return $this->hashMany(room::class);
+        return $this->hasMany(Room::class);
     }
 
     public function bonuses()
     {
-        return $this->hashMan(Bonus::class);
+        return $this->hasMany(Bonus::class);
     }
 
-    public function testimonnials()
+    public function testimonials()
     {
-        return $this->hashMan(Testiomonial::class);
+        return $this->hasMany(Testimonial::class);
     }
 
     public function transactions()
     {
-        return $this->hashMan(transaction::class);
+        return $this->hasMany(Transaction::class);
     }
 }
