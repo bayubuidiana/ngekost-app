@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TransactionResource\Pages;
-use App\Filament\Resources\TransactionResource\RelationManagers;
 use App\Models\Transaction;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -11,7 +10,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TransactionResource extends Resource
 {
@@ -19,12 +17,33 @@ class TransactionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-credit-card';
 
+    protected static ?string $navigationGroup = 'Boarding House Management';
+
+    // ✅ Menampilkan jumlah transaksi yang pending
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::where('payment_status', 'pending')->count();
+    }
+
+    // ✅ Warna badge berdasarkan jumlah transaksi pending
+    public static function getNavigationBadgeColor(): ?string
+    {
+        $count = static::getModel()::where('payment_status', 'pending')->count();
+
+        if ($count > 50) {
+            return 'danger';   // Merah
+        } elseif ($count > 20) {
+            return 'warning';  // Kuning
+        }
+
+        return 'info';          // Biru muda
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('code')
-                    ->required(),
+                Forms\Components\TextInput::make('code')->required(),
 
                 Forms\Components\Select::make('boardingHouse_id')
                     ->relationship('boardinghouse', 'name')
@@ -34,45 +53,36 @@ class TransactionResource extends Resource
                     ->relationship('room', 'name')
                     ->required(),
 
-                Forms\Components\TextInput::make('name')
-                    ->required(),
+                Forms\Components\TextInput::make('name')->required(),
 
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required(),
+                Forms\Components\TextInput::make('email')->email()->required(),
 
-                Forms\Components\TextInput::make('phone_number')
-                    ->required(),
+                Forms\Components\TextInput::make('phone_number')->required(),
 
-                Forms\Components\select::make('payment_method')
+                Forms\Components\Select::make('payment_method')
                     ->options([
                         'down_payment' => 'Down Payment',
-                        'full_payment' => 'full payment'
+                        'full_payment' => 'Full Payment',
                     ])
                     ->required(),
 
-                Forms\Components\select::make('payment_status')
+                Forms\Components\Select::make('payment_status')
                     ->options([
-                        'pending' => 'pending',
-                        'paid' => 'paid'
+                        'pending' => 'Pending',
+                        'paid' => 'Paid',
                     ])
                     ->required(),
 
-                Forms\Components\DatePicker::make('start_date')
-                    ->required(),
+                Forms\Components\DatePicker::make('start_date')->required(),
 
-                Forms\Components\TextInput::make('duration')
-                    ->numeric()
-                    ->required(),
+                Forms\Components\TextInput::make('duration')->numeric()->required(),
 
                 Forms\Components\TextInput::make('total_amount')
                     ->numeric()
                     ->prefix('IDR')
                     ->required(),
 
-                Forms\Components\DatePicker::make('transaction_date')
-                    ->required(),
-
+                Forms\Components\DatePicker::make('transaction_date')->required(),
             ]);
     }
 
@@ -104,9 +114,7 @@ class TransactionResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
